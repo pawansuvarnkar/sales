@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Analytics Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=5">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">📊 Sales Analytics</h1>
+            <div class="nav-links">
+                <a href="#dashboard">Dashboard</a>
+                <a href="#upload">Upload</a>
+                <a href="#insights">Insights</a>
+                <a href="#data">Data</a>
+                <button onclick="toggleDarkMode()" class="dark-mode-btn" id="darkModeBtn" title="Toggle Dark Mode">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <h2>🔍 Filters</h2>
+            <div class="filter-group">
+                <label>Region:</label>
+                <div id="regionFilters" class="checkbox-group"></div>
+            </div>
+            <div class="filter-group">
+                <label>Category:</label>
+                <div id="categoryFilters" class="checkbox-group"></div>
+            </div>
+            <button onclick="applyFilters()" class="btn-primary">Apply Filters</button>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-container">
+            <div class="kpi-card">
+                <div class="kpi-icon">💰</div>
+                <div class="kpi-content">
+                    <h3>Total Revenue</h3>
+                    <p class="kpi-value" id="totalRevenue">₹0</p>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">📦</div>
+                <div class="kpi-content">
+                    <h3>Total Orders</h3>
+                    <p class="kpi-value" id="totalOrders">0</p>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">📈</div>
+                <div class="kpi-content">
+                    <h3>Avg Order Value</h3>
+                    <p class="kpi-value" id="avgOrderValue">₹0</p>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">⭐</div>
+                <div class="kpi-content">
+                    <h3>Top Product</h3>
+                    <p class="kpi-value" id="topProduct">-</p>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">🌍</div>
+                <div class="kpi-content">
+                    <h3>Best Region</h3>
+                    <p class="kpi-value" id="bestRegion">-</p>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">🏆</div>
+                <div class="kpi-content">
+                    <h3>Best Category</h3>
+                    <p class="kpi-value" id="bestCategory">-</p>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">📊</div>
+                <div class="kpi-content">
+                    <h3>Total Quantity</h3>
+                    <p class="kpi-value" id="totalQuantity">0</p>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">💎</div>
+                <div class="kpi-content">
+                    <h3>Highest Order</h3>
+                    <p class="kpi-value" id="highestOrder">₹0</p>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">📉</div>
+                <div class="kpi-content">
+                    <h3>Monthly Growth</h3>
+                    <p class="kpi-value" id="growthPct">0%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights Section -->
+        <div class="insights-section" id="insights">
+            <h2>💡 Key Insights</h2>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <div class="insight-icon">🏆</div>
+                    <div class="insight-content">
+                        <h4>Top Category</h4>
+                        <p id="insightCategory">Loading...</p>
+                    </div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">🌍</div>
+                    <div class="insight-content">
+                        <h4>Best Region</h4>
+                        <p id="insightRegion">Loading...</p>
+                    </div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">⭐</div>
+                    <div class="insight-content">
+                        <h4>Most Sold Product</h4>
+                        <p id="insightProduct">Loading...</p>
+                    </div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">📅</div>
+                    <div class="insight-content">
+                        <h4>Best Month</h4>
+                        <p id="insightMonth">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-container">
+            <div class="chart-card">
+                <h3>📈 Monthly Sales Trend</h3>
+                <canvas id="monthlySalesChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>📊 Revenue by Category</h3>
+                <canvas id="categoryRevenueChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>🌍 Region-wise Revenue Distribution</h3>
+                <canvas id="regionRevenueChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>🏅 Top 5 Products by Revenue</h3>
+                <canvas id="topProductsChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>🌎 Revenue by Region</h3>
+                <canvas id="regionBarChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>📅 Daily Sales Trend</h3>
+                <canvas id="dailySalesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-section" id="data">
+            <h2>📋 Sales Data</h2>
+            <div class="table-controls">
+                <input type="text" id="searchInput" placeholder="🔍 Search products, orders, categories..." class="search-input">
+                <div class="export-buttons">
+                    <button onclick="exportCSV()" class="export-btn">📄 CSV</button>
+                    <button onclick="exportExcel()" class="export-btn">📊 Excel</button>
+                    <button onclick="exportPDF()" class="export-btn">📑 PDF</button>
+                </div>
+            </div>
+            <div class="pagination-info">
+                <span id="paginationInfo">Showing 0 of 0 entries</span>
+            </div>
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('OrderID')">Order ID <span class="sort-icon">⇅</span></th>
+                            <th onclick="sortTable('OrderDate')">Date <span class="sort-icon">⇅</span></th>
+                            <th onclick="sortTable('Product')">Product <span class="sort-icon">⇅</span></th>
+                            <th onclick="sortTable('Category')">Category <span class="sort-icon">⇅</span></th>
+                            <th onclick="sortTable('Region')">Region <span class="sort-icon">⇅</span></th>
+                            <th onclick="sortTable('Quantity')">Quantity <span class="sort-icon">⇅</span></th>
+                            <th onclick="sortTable('Price')">Price <span class="sort-icon">⇅</span></th>
+                            <th onclick="sortTable('Revenue')">Revenue <span class="sort-icon">⇅</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-controls">
+                <button onclick="previousPage()" id="prevBtn" class="pagination-btn">← Previous</button>
+                <span id="pageInfo">Page 1</span>
+                <button onclick="nextPage()" id="nextBtn" class="pagination-btn">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Upload Section -->
+    <div class="container">
+        <div class="upload-section" id="upload">
+            <div class="upload-card">
+                <div class="upload-header">
+                    <h2>📤 Import Sales Data</h2>
+                    <p>Upload a CSV file to analyze your sales data</p>
+                </div>
+                
+                <div class="upload-content">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📁</div>
+                        <h3>Drag & Drop CSV File Here</h3>
+                        <p>or</p>
+                        <button type="button" class="upload-btn" id="browseBtn">Browse Files</button>
+                        <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                        <p class="upload-hint">Maximum file size: 16MB</p>
+                    </div>
+                    
+                    <div id="uploadStatus" class="upload-status" style="display: none;">
+                        <div class="status-content">
+                            <div class="status-icon" id="statusIcon">⏳</div>
+                            <div class="status-text">
+                                <h4 id="statusTitle">Uploading...</h4>
+                                <p id="statusMessage">Processing your file</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upload-requirements">
+                    <h4>📋 Required CSV Columns:</h4>
+                    <div class="requirements-grid">
+                        <div class="requirement-item">
+                            <span class="req-icon">✓</span>
+                            <span>OrderID</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="req-icon">✓</span>
+                            <span>OrderDate</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="req-icon">✓</span>
+                            <span>Product</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="req-icon">✓</span>
+                            <span>Category</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="req-icon">✓</span>
+                            <span>Region</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="req-icon">✓</span>
+                            <span>Quantity</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="req-icon">✓</span>
+                            <span>Price</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="req-icon">✓</span>
+                            <span>Revenue</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Sales Analytics Dashboard. All rights reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}?v=5"></script>
+</body>
+</html>

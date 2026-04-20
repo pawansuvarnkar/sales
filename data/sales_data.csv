@@ -1,0 +1,13 @@
+OrderID,OrderDate,Product,Category,Region,Quantity,Price,Revenue,Month,Week
+3001,2024-03-12,Laptop,Fashion,North,4,19398,77592,2024-03,11
+3002,2024-04-17,Laptop,Accessories,South,4,36041,144164,2024-04,16
+3003,2024-04-07,Camera,Accessories,North,5,20584,102920,2024-04,14
+3004,2024-04-21,Camera,Accessories,North,3,30047,90141,2024-04,16
+3005,2024-03-04,Camera,Accessories,East,2,20526,41052,2024-03,10
+3006,2024-04-01,Tablet,Electronics,North,4,55917,223668,2024-04,14
+3007,2024-03-27,Headphones,Electronics,North,5,12920,64600,2024-03,13
+3008,2024-04-15,Camera,Fashion,West,1,29606,29606,2024-04,16
+3009,2024-03-18,Headphones,Fashion,South,1,27883,27883,2024-03,12
+3010,2024-04-11,Watch,Electronics,East,2,26797,53594,2024-04,15
+3011,2024-04-13,Watch,Electronics,East,4,596,2384,2024-04,15
+3012,2024-03-11,Laptop,Accessories,East,1,22592,22592,2024-03,11
