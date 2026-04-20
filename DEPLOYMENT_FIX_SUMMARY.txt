@@ -1,0 +1,32 @@
+🔧 QUICK FIX FOR RENDER DEPLOYMENT ISSUE
+==========================================
+
+PROBLEM: Pandas taking too long to install (timeout)
+
+✅ SOLUTION: Updated to compatible versions
+
+📝 WHAT TO DO NOW:
+
+1. UPDATE requirements.txt on GitHub:
+   Flask==3.0.3
+   pandas==2.2.2
+   gunicorn==22.0.0
+   Werkzeug==3.0.3
+   numpy==1.26.4
+
+2. UPDATE runtime.txt on GitHub:
+   python-3.11.9
+
+3. COMMIT CHANGES
+   Render will auto-redeploy
+
+4. WAIT 3-5 MINUTES
+   Deployment will succeed! ✅
+
+⚡ SUPER FAST ALTERNATIVE (1 minute deploy):
+   Use requirements-light.txt (no pandas)
+   Only if you don't need CSV processing
+
+📖 DETAILED GUIDE: See RENDER_FIX.md
+
+🎯 RESULT: Deployment completes in 3-5 minutes instead of timing out!
