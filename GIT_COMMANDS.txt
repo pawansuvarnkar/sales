@@ -1,0 +1,35 @@
+# Git Commands to Push Updates to GitHub
+
+## Step 1: Open Command Prompt in Your Project Folder
+Navigate to: C:\Projects\Sales-Data-Analysis
+
+## Step 2: Run These Commands One by One
+
+# Initialize git (if not already done)
+git init
+
+# Add your GitHub repository as remote (replace with your actual repo URL)
+git remote add origin https://github.com/pawansuvarnkar/sales.git
+
+# Or if already added, update it:
+git remote set-url origin https://github.com/pawansuvarnkar/sales.git
+
+# Check current branch
+git branch
+
+# If not on main, create and switch to main
+git checkout -b main
+
+# Add all files
+git add .
+
+# Commit changes
+git commit -m "Fix deployment: Update Python version and dependencies"
+
+# Push to GitHub
+git push -u origin main
+
+# If it asks for force push (because of conflicts):
+git push -u origin main --force
+
+## Done! Your files are now on GitHub ✅
